@@ -1,5 +1,7 @@
 package com.itxj.service;
 
+import com.itxj.pojo.User;
+
 /*
  *  @项目名：  taotao-parent
  *  @包名：    com.itxj.service
@@ -11,4 +13,5 @@ package com.itxj.service;
 public interface UserService {
 
     void test();
+    int addUser(User user);
 }

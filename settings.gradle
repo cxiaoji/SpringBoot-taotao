@@ -4,4 +4,6 @@ include 'taotao-interface'
 include 'taotao-service'
 include 'taotao-pojo'
 include 'taotao-mapper'
+include 'taotao-common'
+include 'taotao-portal'
 

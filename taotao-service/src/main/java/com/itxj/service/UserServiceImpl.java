@@ -1,6 +1,10 @@
 package com.itxj.service;
 
+
 import com.alibaba.dubbo.config.annotation.Service;
+import com.itxj.mapper.UserMapper;
+import com.itxj.pojo.User;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /*
  *  @项目名：  taotao-parent
@@ -13,9 +17,18 @@ import com.alibaba.dubbo.config.annotation.Service;
 @Service
 public class UserServiceImpl implements UserService {
 
+    @Autowired
+    private UserMapper userMapper;
 
     public void test(){
 
         System.out.println("service 测试成功");
+    }
+
+    @Override
+    public int addUser(User user) {
+
+
+        return userMapper.insert(user);
     }
 }
