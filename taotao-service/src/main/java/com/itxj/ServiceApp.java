@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *  @描述：    TODO
  */
 
+
 @SpringBootApplication
 public class ServiceApp {
 
@@ -19,4 +20,3 @@ public class ServiceApp {
         SpringApplication.run(ServiceApp.class,args);
     }
 }
-

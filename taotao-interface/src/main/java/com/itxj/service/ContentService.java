@@ -3,8 +3,6 @@ package com.itxj.service;
 import com.github.pagehelper.PageInfo;
 import com.itxj.pojo.Content;
 
-import java.util.List;
-
 /*
  *  @项目名：  taotao-parent
  *  @包名：    com.itxj.service
@@ -25,5 +23,5 @@ public interface ContentService {
     int update(Content content);
 
     //首页大广告图片查询显示
-    List<Content> selectContentByCategoryParentId(Long cid);
+    String selectContentByCategoryParentId(Long cid);
 }

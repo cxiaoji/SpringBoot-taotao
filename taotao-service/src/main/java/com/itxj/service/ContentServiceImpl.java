@@ -3,12 +3,15 @@ package com.itxj.service;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.gson.Gson;
 import com.itxj.mapper.ContentMapper;
 import com.itxj.pojo.Content;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.util.StringUtils;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /*
  *  @项目名：  taotao-parent
@@ -40,7 +43,12 @@ public class ContentServiceImpl implements ContentService{
       *        updated  更新时间
      */
     @Autowired
+    private  RedisTemplate<String ,String> redisTemplate;
+
+    @Autowired
     private ContentMapper contentMapper;
+
+
 
     @Override
     public int add(Content content) {
@@ -73,6 +81,9 @@ public class ContentServiceImpl implements ContentService{
         for (String id : i) {
             result += contentMapper.deleteByPrimaryKey(Long.parseLong(id));
         }
+        //更新redis数据库缓存
+        ValueOperations<String, String> opsForValue = redisTemplate.opsForValue();
+        opsForValue.set("BigAd","");
         return result;
     }
 
@@ -81,27 +92,74 @@ public class ContentServiceImpl implements ContentService{
     public int update(Content content) {
 
         content.setUpdated(new Date());
-        return contentMapper.updateByPrimaryKey(content);
+
+        int result=contentMapper.updateByPrimaryKey(content);
+        //更新redis数据库缓存
+        ValueOperations<String, String> opsForValue = redisTemplate.opsForValue();
+        opsForValue.set("BigAd","");
+        return result;
     }
      //首页大广告图片查询显示-----增加redis缓存查询
 
     @Override
-    public List<Content> selectContentByCategoryParentId(Long cid) {
+    public String selectContentByCategoryParentId(Long cid) {
 
         //1.从缓存中查询数据
-
+        ValueOperations<String, String> opsForValue = redisTemplate.opsForValue();//redis操作的数据类型
+        String json = opsForValue.get("BigAd");//从缓存查询数据
 
         //2.判断缓存中是否存在数据
+        if(!StringUtils.isEmpty(json)){
+            //3.如果缓存中存在数据则返回数据
+            System.out.println("从redis缓存中获取广告数据----" + json);//打印日志
 
-        //3.如果缓存中存在数据则返回数据
+            return json;
+
+        }
 
         //4.如果缓存中不存在数据则从数据库查询数据并且存在redis缓存中
-        Content content=new Content();
-        content.setCategoryId(cid);
-        //查询大广告数据
-        List<Content> contents = contentMapper.select(content);
 
-        return contents;
+        Content c=new Content();
+        c.setCategoryId(cid);
+        //查询大广告数据
+        List<Content> contents = contentMapper.select(c);
+
+        //构造前端所需的数据机构
+        /**
+         * {
+         * 	"srcB": "http://192.168.174.127/group1/M00/00/00/wKiuf1mCexeABwCpAADW-NO57MA039.jpg",
+         * 	"height": 240,
+         * 	"alt": "",
+         * 	"width": 670,
+         * 	"src": "http://192.168.174.127/group1/M00/00/00/wKiuf1mCexeABwCpAADW-NO57MA039.jpg",
+         * 	"widthB": 550,
+         * 	"href": "http://sale.jd.com/act/e0FMkuDhJz35CNt.html?cpdad=1DLSUE",
+         * 	"heightB": 240
+         * }
+         */
+        List<Map<String,Object>> list=new ArrayList<>();
+        for (Content content : contents) {
+            Map<String,Object> map=new HashMap<>();
+            map.put("srcB",content.getPic2());
+            map.put("height",240);
+            map.put("alt","");
+            map.put("width",670);
+            map.put("src",content.getPic());
+            map.put("widthB",550);
+            map.put("href",content.getUrl());
+            map.put("heightB",240);
+
+            list.add(map);
+        }
+        //json格式转化
+        Gson gson=new Gson();
+        json = gson.toJson(list);
+        //打印日志
+        System.out.println("从数据库中获取广告数据----" + json);
+        //5.数据存在redis缓存中
+        opsForValue.set("BigAd",json);
+
+        return json;
     }
 
 
