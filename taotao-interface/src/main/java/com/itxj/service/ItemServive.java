@@ -15,4 +15,11 @@ public interface ItemServive {
 
     Integer addItem(Item item,String desc);
    PageInfo<Item> listItem(int page, int rows);
+   //通过id查询商品
+   Item getItemById(Long id);
+
+   //通过id删除商品
+    Integer delItem(long id);
+//更新数据
+    Integer updateItem(Item item);
 }

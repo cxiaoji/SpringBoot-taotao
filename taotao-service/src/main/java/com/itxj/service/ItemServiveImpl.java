@@ -59,4 +59,25 @@ public class ItemServiveImpl implements ItemServive{
         List<Item> list = itemMapper.selectAll();
         return new PageInfo<>(list);
     }
+
+    //通过id查询商品
+    @Override
+    public Item getItemById(Long id) {
+        return itemMapper.selectByPrimaryKey(id);
+
+    }
+    //通过id删除商品
+    @Override
+    public Integer delItem(long id) {
+
+        int i = itemMapper.deleteByPrimaryKey(id);
+        return i;
+    }
+
+    //更新商品
+    @Override
+    public Integer updateItem(Item item) {
+
+        return itemMapper.updateByPrimaryKeySelective(item);
+    }
 }

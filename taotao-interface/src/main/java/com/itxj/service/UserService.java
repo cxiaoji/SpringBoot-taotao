@@ -1,7 +1,5 @@
 package com.itxj.service;
 
-import com.itxj.pojo.User;
-
 /*
  *  @项目名：  taotao-parent
  *  @包名：    com.itxj.service
@@ -12,6 +10,6 @@ import com.itxj.pojo.User;
  */
 public interface UserService {
 
-    void test();
-    int addUser(User user);
+    //前台注册校验字段知否存在（1-name，2-phone，3-email）
+    Boolean check(String param,int type);
 }
