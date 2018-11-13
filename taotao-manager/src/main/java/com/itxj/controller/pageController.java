@@ -18,7 +18,7 @@ public class pageController {
     @RequestMapping("index")
     public String index(){
 
-
+        System.out.println("测试热部署000");
         return "index";
     }
 

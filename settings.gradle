@@ -8,4 +8,8 @@ include 'taotao-common'
 include 'taotao-portal'
 include 'taotao-sso-web'
 include 'taotao-sso-service'
+include 'taotao-sso-interface'
+include 'taotao-search-interface'
+include 'taotao-search-service'
+include 'taotao-search-web'
 

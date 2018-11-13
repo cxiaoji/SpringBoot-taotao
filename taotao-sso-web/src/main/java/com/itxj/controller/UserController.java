@@ -5,6 +5,7 @@ import com.itxj.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -23,16 +24,24 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/user/check/{param}/{type}")
-  public ResponseEntity<Boolean> check(@PathVariable String param,@PathVariable int type){
+  public ResponseEntity<String> check(@PathVariable String param,@PathVariable int type,String callback){
 
         try {
             Boolean check = userService.check(param, type);
-            return ResponseEntity.status(HttpStatus.OK).body(check);
+            //callback=jsonp1541218052306
+            String result="";
+            if(!StringUtils.isEmpty(callback)){
+                result=callback+"("+check+")";
+            }
+            else{
+                result=check+"";
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(result);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(true);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
 
 }

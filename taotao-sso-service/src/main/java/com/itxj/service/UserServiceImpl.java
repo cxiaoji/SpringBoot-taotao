@@ -45,6 +45,6 @@ public class UserServiceImpl implements UserService {
                 break;
         }
         List<User> list = userMapper.select(user);
-        return list.size()<0;
+        return list.size()<=0;
     }
 }

@@ -1,10 +1,19 @@
 package com.itxj.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.google.gson.Gson;
+import com.itxj.pojo.User;
 import com.itxj.service.ContentService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 
 /*
  *  @项目名：  taotao-parent
@@ -17,12 +26,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class IndexController {
 
+    @Autowired
+    private RedisTemplate<String,String> redisTemplate;
+
     @Reference
     private ContentService contentService;
 
+    //页面跳转
+    @RequestMapping("/page/{PageName}")
+    public String page(@PathVariable String PageName){
+
+        return PageName;
+    }
+
+
     //门户首页跳转
     @RequestMapping("/")
-    public String index(Model model){
+    public String index(Model model, HttpServletRequest request){
 
         //首页大广告图片查询显示
         String categoryParentId="89";
@@ -61,6 +81,24 @@ public class IndexController {
 
         //将json数据存入视图解析器
         model.addAttribute("list",json);
+        
+        //获取登录的消息
+        Cookie[] cookies = request.getCookies();
+        
+        //判断cookies是否为空
+         if(!StringUtils.isEmpty(cookies)){
+             for (Cookie cookie : cookies) {
+                 String cookieName = cookie.getName();//获取cookies中cookie中key----判断是否是ticket
+                 if("ticket".equals(cookieName)){
+                     String ticket= cookie.getValue();//从cookie中获取令牌---redis的key
+                     String UserInfo= redisTemplate.opsForValue().get(ticket);//从redis中获取User数据
+                     User user=new Gson().fromJson(UserInfo, User.class);//转为对象
+                     System.out.println("user="+user);
+                     model.addAttribute("user",user);
+                 }
+                 
+             }
+         }
         return "index";
     }
 }
