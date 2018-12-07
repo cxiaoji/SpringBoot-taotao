@@ -8,6 +8,7 @@ import com.itxj.mapper.ItemMapper;
 import com.itxj.pojo.Item;
 import com.itxj.pojo.ItemDesc;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsMessagingTemplate;
 
 import java.util.Date;
 import java.util.List;
@@ -29,6 +30,8 @@ public class ItemServiveImpl implements ItemServive{
     @Autowired
     private ItemDescMapper  itemDescMapper;
 
+    @Autowired
+    private JmsMessagingTemplate template;
     //添加商品
     @Override
     public Integer addItem(Item item, String desc) {
@@ -46,6 +49,13 @@ public class ItemServiveImpl implements ItemServive{
         itemDesc.setUpdated(new Date());
         itemDesc.setItemDesc(desc);
         int result02=itemDescMapper.insertSelective(itemDesc);
+
+ /////  activeMQ 消息队列更新搜索系统的索引库
+
+        //创建消费者-----发送消息-----添加商品的id
+        template.convertAndSend("item_save",id);
+
+        System.out.println("生产者发送id=" + id);
 
         return result01+result02;
     }
@@ -66,6 +76,12 @@ public class ItemServiveImpl implements ItemServive{
         return itemMapper.selectByPrimaryKey(id);
 
     }
+//通过id查询商品详情介绍
+    @Override
+    public ItemDesc getItemDescById(Long id) {
+        return itemDescMapper.selectByPrimaryKey(id);
+    }
+
     //通过id删除商品
     @Override
     public Integer delItem(long id) {

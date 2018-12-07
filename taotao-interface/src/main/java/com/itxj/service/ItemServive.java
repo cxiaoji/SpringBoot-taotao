@@ -2,6 +2,7 @@ package com.itxj.service;
 
 import com.github.pagehelper.PageInfo;
 import com.itxj.pojo.Item;
+import com.itxj.pojo.ItemDesc;
 
 /*
  *  @项目名：  taotao-parent
@@ -13,13 +14,19 @@ import com.itxj.pojo.Item;
  */
 public interface ItemServive {
 
-    Integer addItem(Item item,String desc);
-   PageInfo<Item> listItem(int page, int rows);
-   //通过id查询商品
-   Item getItemById(Long id);
+    Integer addItem(Item item, String desc);
 
-   //通过id删除商品
+    PageInfo<Item> listItem(int page, int rows);
+
+    //通过id查询商品
+    Item getItemById(Long id);
+
+    //通过id查询商品详情介绍
+    ItemDesc getItemDescById(Long id);
+
+    //通过id删除商品
     Integer delItem(long id);
-//更新数据
+
+    //更新数据
     Integer updateItem(Item item);
 }

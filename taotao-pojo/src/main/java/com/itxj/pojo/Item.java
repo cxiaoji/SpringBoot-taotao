@@ -75,6 +75,11 @@ public class Item implements java.io.Serializable {
     @Column(name = "UPDATED", nullable = false)
     private Date updated;
 
+    public String[] getImages(){
+
+        return image.split(",");
+    }
+
     /**
      * 获取商品id，同时也是商品编号
      * 
@@ -282,5 +287,22 @@ public class Item implements java.io.Serializable {
      */
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    @Override
+    public String toString() {
+        return "Item{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", sellPoint='" + sellPoint + '\'' +
+                ", price=" + price +
+                ", num=" + num +
+                ", barcode='" + barcode + '\'' +
+                ", image='" + image + '\'' +
+                ", cid=" + cid +
+                ", status=" + status +
+                ", created=" + created +
+                ", updated=" + updated +
+                '}';
     }
 }
