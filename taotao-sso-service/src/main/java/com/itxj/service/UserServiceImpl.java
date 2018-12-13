@@ -13,7 +13,7 @@ import java.util.List;
  *  @文件名:   UserServiceImpl
  *  @创建者:   小吉
  *  @创建时间:  2018/10/31 16:23
- *  @描述：    TODO
+ *  @描述：    TODO  单点登录模块未实现
  */
 @Service
 public class UserServiceImpl implements UserService {
